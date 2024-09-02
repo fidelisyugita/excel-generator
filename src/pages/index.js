@@ -1,16 +1,29 @@
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useRouter } from "next/router";
 import * as XLSX from 'xlsx';
 import styles from '../styles/Dashboard.module.css';
 
 function Dashboard() {
-  const { data: session } = useSession();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('accessToken');
+    if (!token) {
+      router.push("/login");
+    }
+  }, [router]);
 
   const handleDownload = async (e) => {
+    const token = sessionStorage.getItem('accessToken');
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
     e.preventDefault();
     setLoading(true);
 
@@ -18,7 +31,7 @@ function Dashboard() {
       const response = await axios.post(
         'https://fidel.com/search',
         { startDate, endDate },
-        { headers: { Authorization: `Bearer ${session.accessToken}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const jsonData = response.data;
@@ -48,7 +61,7 @@ function Dashboard() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Welcome, {session?.user.email}</h1>
+      <h1 className={styles.title}>Welcome, {sessionStorage.getItem('email')}</h1>
       <form onSubmit={handleDownload} className={styles.form}>
         <label className={styles.label}>
           Start Date:

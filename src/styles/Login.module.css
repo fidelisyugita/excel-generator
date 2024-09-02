@@ -50,3 +50,8 @@
     background-color: #005bb5;
   }
   
+  .error {
+    color: #e74c3c;
+    margin-top: 10px;
+    font-size: 0.875rem;
+  }

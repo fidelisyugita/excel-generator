@@ -6,24 +6,27 @@ import styles from '../styles/Login.module.css';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous errors
 
-    // const result = await signIn('credentials', {
-    //   redirect: false,
-    //   email,
-    //   password,
-    // });
+    try {
+      // const response = await axios.post('/api/login', { email, password });
+      // const { token } = response.data;
 
-    // if (result?.error) {
-    //   alert('Login failed: ' + result.error);
-    // } else {
-    //   router.push('/dashboard'); // Redirect after successful login
-    // }
+      // Store token in sessionStorage or localStorage
+      sessionStorage.setItem('accessToken', 'tokenbabi');
+      sessionStorage.setItem('email', email);
 
-    router.push('/dashboard'); // Redirect after successful login
+      // Redirect to dashboard on successful login
+      router.push("/");
+    } catch (error) {
+      setError(error.response?.data?.error || "An unexpected error occurred. Please try again.");
+      console.error("Login error:", error);
+    }
   };
 
   return (
@@ -50,6 +53,8 @@ export default function Login() {
           <button type="submit" className={styles.button}>
             Login
           </button>
+
+          {error && <p className={styles.error}>{error}</p>} {/* Display error message */}
         </form>
       </div>
     </div>
